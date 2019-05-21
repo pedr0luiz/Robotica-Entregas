@@ -11,14 +11,20 @@ public class ExecutaBusca {
 	private static float cellSize = 0.5f; //m
 
 	public static void main(String[] args) {
+
+		VrepSimulator sim = VrepSimulator.getInstance();
+		VrepWorld world = sim.createWorld();
+		VrepRobot robot = sim.createRobot();
+
+		GridMap map = world.buildMap(cellSize);
 		
 		//Carrega o arquivo a partir do arquivo	
-		GridMap map;
-		try {
-			map = GridMap.fromFile("map_pedro_zezze.txt");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+//		GridMap map;
+//		try {
+//			map = GridMap.fromFile("map_pedro_zezze.txt");
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		}
 		
 		if(map == null) 
 			throw new RuntimeException("O mapa discretizado não pode ser obtido a partir do modelo");
@@ -34,7 +40,8 @@ public class ExecutaBusca {
 		Block alvo = new Block(rowColFim[0], rowColFim[1], BlockType.FREE) ;
 		BuscaA busca = new BuscaA(map, inicial, alvo);
 		RobotAction[] solucao = busca.resolver();
-		
+		System.out.println(solucao);
+
 		//Mostra a solução
 		if(solucao == null) {
 			System.out.println("Nao foi encontrada solucao para o problema");
@@ -53,6 +60,12 @@ public class ExecutaBusca {
 			System.out.println();
 			System.out.println("Rota encontrada:");
 			System.out.println(map);
+
+			for (RobotAction acao:solucao){
+				System.out.println("Entrou");
+				robot.execute(acao,cellSize);
+			}
+
 		}
 	}
 }
